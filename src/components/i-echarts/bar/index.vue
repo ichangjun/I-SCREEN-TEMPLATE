@@ -55,9 +55,9 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', resizeChart)
 })
-// 监听 props.data 变化，更新图表
+// 监听 props.yData 变化，更新图表
 watch(
-  () => props.data,
+  () => props.yData,
   (newVal) => {
     if (chartBarRef.value) {
       chartBarRef.value.setOption({
