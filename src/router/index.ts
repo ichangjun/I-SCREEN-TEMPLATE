@@ -2,12 +2,11 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-01-11 14:39:48
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-08 16:13:10
+ * @LastEditTime: 2024-04-08 17:31:15
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/router/index.ts
  * @Description: 工程路由文件
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import store from '@/store'
 
 // 通过vite 的import.meta.glob读取src/views下的所有index.vue文件
 const viewIndexModules = import.meta.glob('../views/**/index.vue')
@@ -60,8 +59,5 @@ const router = createRouter({
 router.beforeEach((_to, _from, next) => {
   next()
 })
-router.afterEach((to) => {
-  // 设置当前路由
-  store.dispatch('tabMenu/updateTab', to.path)
-})
+
 export default router
