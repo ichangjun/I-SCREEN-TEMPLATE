@@ -46,7 +46,7 @@ const props = defineProps({
 const chartBarRef = ref(null)
 // 监听窗口大小变化，重新渲染图表
 const resizeChart = () => {
-  chartBarRef.value.resize()
+  chartBarInstance.value.resize()
 }
 onMounted(() => {
   updateChartView()
@@ -60,7 +60,7 @@ watch(
   () => props.yData,
   (newVal) => {
     if (chartBarRef.value) {
-      chartBarRef.value.setOption({
+      chartBarInstance.value.setOption({
         series: [{
           data: newVal
         }]

@@ -46,7 +46,7 @@ const props = defineProps({
 const chartLineRef = ref(null)
 // 监听窗口大小变化，重新渲染图表
 const resizeChart = () => {
-  chartLineRef.value.resize()
+  chartLineInstance.value.resize()
 }
 onMounted(() => {
   updateChartView()
@@ -60,7 +60,7 @@ watch(
   () => props.yData,
   (newVal) => {
     if (chartLineRef.value) {
-      chartLineRef.value.setOption({
+      chartLineInstance.value.setOption({
         series: [{
           data: newVal
         }]
@@ -95,16 +95,6 @@ const assembleChartOptions = computed(() => {
             { offset: 1, color: '#10749F' },
           ]),
         }
-      }, {
-        data: props.yData,
-        ItemStyle: {
-          normal: {
-            color: '#FFFFFF',
-            shadowBlur: 5,
-            shadowOffsetX: 0,
-            shadowOffsetY: 2
-          }
-        },
       }]
     },
     props.extraOptions

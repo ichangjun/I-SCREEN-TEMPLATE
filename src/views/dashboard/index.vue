@@ -2,20 +2,18 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 18:23:51
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 09:22:43
+ * @LastEditTime: 2024-04-09 10:45:57
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/views/dashboard/index.vue
  * @Description: 大屏首页
 -->
 <template>
   <div class="dashboard-view w-full h-full">
-    <chart-bar :x-data="xData" :y-data="yData" :extra-options="extraOptions" />
-    <chart-line :x-data="xData" :y-data="yData" :extra-options="extraOptions" />
+    <i-echarts-bar :x-data="xData" :y-data="yData" :extra-options="extraOptions" />
+    <i-echarts-line :x-data="xData" :y-data="yData" :extra-options="extraOptions" />
   </div>
 </template>
 <script setup lang='ts'>
 import { defineOptions, inject } from 'vue'
-import ChartBar from '@/components/i-echarts/bar/index.vue'
-import ChartLine from '@/components/i-echarts/line/index.vue';
 defineOptions({
   name: 'Dashboard',
 })
