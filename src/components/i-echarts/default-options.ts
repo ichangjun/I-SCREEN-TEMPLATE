@@ -2,9 +2,9 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-08 19:47:19
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-08 21:38:22
- * @FilePath: /I-SCREEN-TEMPLATE/src/components/i-echarts/bar/default-options.ts
- * @Description: bar 柱状图默认配置
+ * @LastEditTime: 2024-04-09 09:29:17
+ * @FilePath: /I-SCREEN-TEMPLATE/src/components/i-echarts/line/default-options.ts
+ * @Description: line 折线图默认配置
  */
 const BASEOPTIONS = {
   grid: {
@@ -65,7 +65,7 @@ const BASEOPTIONS = {
   series: [
     {
       name: '',
-      type: 'bar',
+      type: 'line',
       symbol: 'circle',
       symbolSize: 6,
       barWidth: '8', // 设置柱宽为系列宽度的50%
@@ -82,26 +82,6 @@ const BASEOPTIONS = {
         formatter: '{c}%',
         textStyle: {
           color: '#FFFFFF'
-        }
-      }
-    },
-    //顶部圆柱帽子
-    {
-      name: 'a',
-      tooltip: {
-        show: false
-      },
-      type: 'pictorialBar',
-      symbol: 'rect',
-      symbolSize: ['15', '4'],
-      symbolPosition: 'end',
-      z: 3,
-      ItemStyle: {
-        normal: {
-          color: '#FFFFFF',
-          shadowBlur: 5,
-          shadowOffsetX: 0,
-          shadowOffsetY: 2
         }
       }
     }

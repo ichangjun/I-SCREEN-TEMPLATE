@@ -1,17 +1,17 @@
 <template>
-  <div ref="chartBarRef" class='chart-bar-view' :style="{ width: props.width, height: props.height }"></div>
+  <div ref="chartLineRef" class='chart-line-view' :style="{ width: props.width, height: props.height }"></div>
 </template>
 <script setup lang='ts'>
 import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed } from 'vue'
 import { merge } from 'lodash-es'
 import { BASEOPTIONS } from '../default-options'
-import { BarSeriesOption } from 'echarts/charts'
+import { LineSeriesOption } from 'echarts/charts'
 defineOptions({
-  name: 'ChartBar'
+  name: 'ChartLine'
 })
 // 注入 echarts 实例
 const echarts = inject('$echarts')
-const chartBarInstance = ref(null)
+const chartLineInstance = ref(null)
 const props = defineProps({
   // 业务数据，对应echarts的 xAxis 中的 data
   xData: {
@@ -43,10 +43,10 @@ const props = defineProps({
   }
 })
 // echarts 实例
-const chartBarRef = ref(null)
+const chartLineRef = ref(null)
 // 监听窗口大小变化，重新渲染图表
 const resizeChart = () => {
-  chartBarRef.value.resize()
+  chartLineRef.value.resize()
 }
 onMounted(() => {
   updateChartView()
@@ -59,8 +59,8 @@ onUnmounted(() => {
 watch(
   () => props.yData,
   (newVal) => {
-    if (chartBarRef.value) {
-      chartBarRef.value.setOption({
+    if (chartLineRef.value) {
+      chartLineRef.value.setOption({
         series: [{
           data: newVal
         }]
@@ -87,7 +87,7 @@ const assembleChartOptions = computed(() => {
     },
     {
       series: [{
-        type: 'bar',
+        type: 'line',
         data: props.yData,
         itemStyle: {
           color: new (echarts as any).graphic.LinearGradient(0, 0, 0, 1, [
@@ -95,19 +95,8 @@ const assembleChartOptions = computed(() => {
             { offset: 1, color: '#10749F' },
           ]),
         }
-      },
-      //顶部圆柱帽子
-      {
+      }, {
         data: props.yData,
-        name: 'a',
-        tooltip: {
-          show: false
-        },
-        type: 'pictorialBar',
-        symbol: 'rect',
-        symbolSize: ['15', '4'],
-        symbolPosition: 'end',
-        z: 3,
         ItemStyle: {
           normal: {
             color: '#FFFFFF',
@@ -119,21 +108,21 @@ const assembleChartOptions = computed(() => {
       }]
     },
     props.extraOptions
-  ) as BarSeriesOption
+  ) as LineSeriesOption
 })
 // 图表渲染
 const updateChartView = () => {
-  if (chartBarRef.value) {
-    chartBarInstance.value = (echarts as any).init(chartBarRef.value)
-    chartBarInstance.value.showLoading({
+  if (chartLineRef.value) {
+    chartLineInstance.value = (echarts as any).init(chartLineRef.value)
+    chartLineInstance.value.showLoading({
       text: '正在努力加载...',
       color: '#333',
       textColor: '#333',
       maskColor: 'rgba(255,255,255, 0.5)',
       zlevel: 0
     })
-    chartBarInstance.value.setOption(assembleChartOptions.value)
-    chartBarInstance.value.hideLoading()
+    chartLineInstance.value.setOption(assembleChartOptions.value)
+    chartLineInstance.value.hideLoading()
   }
 }
 </script>
