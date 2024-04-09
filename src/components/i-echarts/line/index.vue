@@ -2,7 +2,7 @@
   <div ref="chartLineRef" class='chart-line-view' :style="{ width: props.width, height: props.height }"></div>
 </template>
 <script setup lang='ts'>
-import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed } from 'vue'
+import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed, markRaw } from 'vue'
 import { merge } from 'lodash-es'
 import { BASEOPTIONS } from '../default-options'
 import { LineSeriesOption } from 'echarts/charts'
@@ -103,7 +103,7 @@ const assembleChartOptions = computed(() => {
 // 图表渲染
 const updateChartView = () => {
   if (chartLineRef.value) {
-    chartLineInstance.value = (echarts as any).init(chartLineRef.value)
+    chartLineInstance.value = markRaw((echarts as any).init(chartLineRef.value))
     chartLineInstance.value.showLoading({
       text: '正在努力加载...',
       color: '#333',

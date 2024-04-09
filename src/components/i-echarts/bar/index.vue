@@ -2,7 +2,7 @@
   <div ref="chartBarRef" class='chart-bar-view' :style="{ width: props.width, height: props.height }"></div>
 </template>
 <script setup lang='ts'>
-import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed } from 'vue'
+import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed, markRaw } from 'vue'
 import { merge } from 'lodash-es'
 import { BASEOPTIONS } from '../default-options'
 import { BarSeriesOption } from 'echarts/charts'
@@ -108,7 +108,7 @@ const assembleChartOptions = computed(() => {
         symbolSize: ['15', '4'],
         symbolPosition: 'end',
         z: 3,
-        ItemStyle: {
+        itemStyle: {
           normal: {
             color: '#FFFFFF',
             shadowBlur: 5,
@@ -124,7 +124,7 @@ const assembleChartOptions = computed(() => {
 // 图表渲染
 const updateChartView = () => {
   if (chartBarRef.value) {
-    chartBarInstance.value = (echarts as any).init(chartBarRef.value)
+    chartBarInstance.value = markRaw((echarts as any).init(chartBarRef.value))
     chartBarInstance.value.showLoading({
       text: '正在努力加载...',
       color: '#333',

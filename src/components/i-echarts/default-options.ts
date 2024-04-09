@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-08 19:47:19
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 10:32:18
+ * @LastEditTime: 2024-04-09 11:48:09
  * @FilePath: /I-SCREEN-TEMPLATE/src/components/i-echarts/line/default-options.ts
  * @Description: line 折线图默认配置
  */
