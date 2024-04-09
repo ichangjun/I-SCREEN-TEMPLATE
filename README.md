@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-01-05 10:36:01
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-08 17:59:38
+ * @LastEditTime: 2024-04-09 10:12:38
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/README.md
  * @Description: 工程描述文档
 -->
@@ -242,3 +242,218 @@ export default defineConfig({
     }
 })
 ```
+
+#### 按需引入 echarts 图表库，减少打包体积
+
+创建 _plugins/echarts.ts_ 文件，内容如下：
+
+```ts
+import * as echarts from 'echarts/core'
+// 按需引入图表类型
+import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts'
+import {
+  // 图表标题组件
+  TitleComponent,
+  // 提示框组件
+  TooltipComponent,
+  // 直角坐标系组件
+  GridComponent,
+  // 数据集组件
+  DatasetComponent,
+  // 内置数据转换器组件 (filter, sort)
+  TransformComponent
+} from 'echarts/components'
+import { LabelLayout, UniversalTransition } from 'echarts/features'
+import { CanvasRenderer } from 'echarts/renderers'
+
+// 注册必须的组件
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  DatasetComponent,
+  TransformComponent,
+  BarChart,
+  LineChart,
+  PictorialBarChart,
+  LabelLayout,
+  UniversalTransition,
+  CanvasRenderer
+])
+
+export default echarts
+```
+
+在 main.ts 中引入该文件：
+
+```ts
+import echarts from './plugins/echarts'
+// 注册全局变量
+app.provide('$echarts', echarts)
+```
+
+然后就可以愉快的在组件中使用 echart 图表了。
+
+#### 封装统一的图表组件，业务数据和 echarts 的 options 配置分离
+
+第一步，我们以柱状图&折线图为例，创建 _components/echarts/bar/index.vue_ 和 _components/echarts/line/index.vue_ 文件，结构如下：
+
+```ts
+- components
+  - echarts
+    - bar
+      - index.vue
+    - line
+      - index.vue
+  - default-options.ts
+```
+
+第二步，在 _components/echarts/default-options.ts_ 文件中，定义默认的 echarts 配置，配置可根据业务需求进行调整。内容如下：
+
+```ts
+const BASEOPTIONS = {
+  grid: {
+    containLabel: true,
+    bottom: 0,
+    left: 25,
+    right: 35,
+    top: 30
+  },
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: 'rgba(13, 64, 71, 0.50)',
+    borderColor: 'rgba(143, 225, 252, 0.60)',
+    padding: 8,
+    textStyle: {
+      color: '#FFFFFF'
+    },
+    valueFormatter: function (value) {
+      return value
+    }
+  },
+  xAxis: {
+    type: 'category',
+    axisLabel: {
+      interval: 0,
+      show: true,
+      fontSize: 12,
+      margin: 15,
+      color: '#BCE7FA'
+    },
+    axisLine: {
+      lineStyle: {
+        color: 'rgba(39, 164, 255, .5)'
+      }
+    },
+    axisTick: {
+      show: false
+    }
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      show: false
+    },
+    axisLine: {
+      show: false
+    },
+    axisTick: {
+      show: false
+    },
+    splitLine: {
+      lineStyle: {
+        type: 'dashed',
+        color: 'rgba(188, 231, 250, 0.15)'
+      }
+    }
+  },
+  series: [
+    {
+      name: '',
+      type: 'line',
+      symbol: 'circle',
+      symbolSize: 6,
+      barWidth: '8', // 设置柱宽为系列宽度的50%
+      showBackground: true,
+      backgroundStyle: {
+        color: 'rgba(180, 180, 180, 0.2)'
+      },
+      lineStyle: {
+        width: 1
+      },
+      label: {
+        show: true,
+        position: 'top',
+        formatter: '{c}%',
+        textStyle: {
+          color: '#FFFFFF'
+        }
+      }
+    }
+  ]
+}
+
+export { BASEOPTIONS }
+```
+
+第三步，在 _components/echarts/bar/index.vue_ 和 _components/echarts/line/index.vue_ 文件中，进行 echarts 图表的渲染配置，并根据业务数据进行配置，不在进行详细内容罗列，重点是业务配置项和通用配置项的合并。内容如下：
+
+```ts
+import { merge } from 'lodash-es'
+import { BASEOPTIONS } from '../default-options'
+// 这里我们使用计算属性，完成 options 的合并
+// 组装图表配置
+const assembleChartOptions = computed(() => {
+  return merge(
+    {},
+    // 通用配置项
+    BASEOPTIONS,
+    // 图表类型配置项
+    {
+      xAxis: {
+        data: props.xData
+      }
+    },
+    {
+      yAxis: {
+        type: 'value'
+      }
+    },
+    {
+      series: [
+        {
+          type: 'line',
+          data: props.yData,
+          itemStyle: {
+            color: new (echarts as any).graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#0CD2BB' },
+              { offset: 1, color: '#10749F' }
+            ])
+          }
+        },
+        {
+          data: props.yData,
+          ItemStyle: {
+            normal: {
+              color: '#FFFFFF',
+              shadowBlur: 5,
+              shadowOffsetX: 0,
+              shadowOffsetY: 2
+            }
+          }
+        }
+      ]
+    },
+    // 业务配置项
+    props.extraOptions
+  ) as LineSeriesOption
+})
+```
+
+配置按照业务定制化的强度要求，分为三级：
+
+- 通用配置项：BASEOPTIONS
+- 图表类型配置项：LineSeriesOption
+- 业务配置项：props.extraOptions
+
+定制化深度和复杂度，取决于业务的复杂度和定制化需求。业务定制化程度越高的，越要在调用的时候进行定制化内容的传递，才能达到最佳效果。将可以剥离的通用配置，逐级抽离。比如抽离到相同图表类型的组件中、抽离到全局图表配置中。
