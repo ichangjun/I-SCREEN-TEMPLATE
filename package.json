@@ -19,6 +19,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@types/node": "^20.10.6",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vueuse/core": "^10.9.0",

@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 18:14:50
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-02-22 19:21:54
+ * @LastEditTime: 2024-04-09 15:54:06
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/layouts/index.vue
  * @Description: 内容框架页面
 -->
@@ -21,5 +21,4 @@ defineOptions({
   name: 'Layouts'
 })
 </script>
-<style lang='less' scoped>
-</style>
+<style lang='less' scoped></style>
