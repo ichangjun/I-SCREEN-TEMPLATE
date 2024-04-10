@@ -2,14 +2,13 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-09 16:06:53
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 18:16:21
+ * @LastEditTime: 2024-04-10 14:20:52
  * @FilePath: /I-SCREEN-TEMPLATE/src/views/dashboard/components/i-left-panel/index.vue
  * @Description: 栏目标题
 -->
 <template>
-  <section class="i-left-panel">
+  <section class="i-left-panel w-full">
     <div class="panel-title">
-      <!-- <div class="label"></div> -->
       <slot name="title"></slot>
     </div>
     <slot></slot>
@@ -39,7 +38,6 @@ const getPanelTitleBg = computed(() => {
 </script>
 <style lang="less" scoped>
 .i-left-panel {
-  width: 100%;
   height: v-bind(getPanelHeight);
 
   .panel-title {

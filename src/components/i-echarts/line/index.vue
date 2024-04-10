@@ -1,16 +1,24 @@
+<!--
+ * @Author: changjun anson1992@163.com
+ * @Date: 2024-04-10 14:16:25
+ * @LastEditors: changjun anson1992@163.com
+ * @LastEditTime: 2024-04-10 20:25:51
+ * @FilePath: /I-SCREEN-TEMPLATE/src/components/i-echarts/line/index.vue
+ * @Description: 折线图
+-->
 <template>
   <div ref="chartLineRef" class='chart-line-view' :style="{ width: props.width, height: props.height }"></div>
 </template>
 <script setup lang='ts'>
-import { defineOptions, defineProps, ref, onMounted, onUnmounted, watch, inject, computed, markRaw } from 'vue'
-import { merge } from 'lodash-es'
-import { BASEOPTIONS } from '../default-options'
-import { LineSeriesOption } from 'echarts/charts'
+import { defineOptions, defineProps, onMounted, inject, ref, markRaw } from 'vue'
+import { listenerChange } from '@/hooks/core/use-echarts-setting'
 defineOptions({
   name: 'ChartLine'
 })
 // 注入 echarts 实例
 const echarts = inject('$echarts')
+// echarts 实例
+const chartLineRef = ref(null)
 const chartLineInstance = ref(null)
 const props = defineProps({
   // 业务数据，对应echarts的 xAxis 中的 data
@@ -42,77 +50,44 @@ const props = defineProps({
     default: '280px'
   }
 })
-// echarts 实例
-const chartLineRef = ref(null)
-// 监听窗口大小变化，重新渲染图表
-const resizeChart = () => {
-  chartLineInstance.value.resize()
-}
-onMounted(() => {
-  updateChartView()
-  window.addEventListener('resize', resizeChart)
-})
-onUnmounted(() => {
-  window.removeEventListener('resize', resizeChart)
-})
-// 监听 props.yData 变化，更新图表
-watch(
-  () => props.yData,
-  (newVal) => {
-    if (chartLineRef.value) {
-      chartLineInstance.value.setOption({
-        series: [{
-          data: newVal
-        }]
-      })
+
+// 图表配置
+const chartOption = [
+  {
+    xAxis: {
+      data: props.xData
     }
   },
   {
-    deep: true
+    yAxis: {
+      type: 'value'
+    }
+  },
+  {
+    series: [{
+      type: 'line',
+      data: props.yData,
+      itemStyle: {
+        color: new (echarts as any).graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#0CD2BB' },
+          { offset: 1, color: '#10749F' },
+        ]),
+      }
+    }]
   }
-)
-// 组装图表配置
-const assembleChartOptions = computed(() => {
-
-  return merge({}, BASEOPTIONS,
-    {
-      xAxis: {
-        data: props.xData
-      }
-    },
-    {
-      yAxis: {
-        type: 'value'
-      }
-    },
-    {
-      series: [{
-        type: 'line',
-        data: props.yData,
-        itemStyle: {
-          color: new (echarts as any).graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#0CD2BB' },
-            { offset: 1, color: '#10749F' },
-          ]),
-        }
-      }]
-    },
-    props.extraOptions
-  ) as LineSeriesOption
-})
-// 图表渲染
-const updateChartView = () => {
+]
+onMounted(() => {
+  // 图表渲染
   if (chartLineRef.value) {
     chartLineInstance.value = markRaw((echarts as any).init(chartLineRef.value))
-    chartLineInstance.value.showLoading({
-      text: '正在努力加载...',
-      color: '#333',
-      textColor: '#333',
-      maskColor: 'rgba(255,255,255, 0.5)',
-      zlevel: 0
-    })
-    chartLineInstance.value.setOption(assembleChartOptions.value)
-    chartLineInstance.value.hideLoading()
   }
-}
+})
+/**
+ *  数据变化 & 窗口大小变化 监听
+ * @param props 通信
+ * @param chartBarRef 图表容器
+ * @param chartBarInstance 图表实例
+ * @param chartOption 图表配置
+ */
+listenerChange(props, chartLineRef, chartLineInstance, chartOption)
 </script>
