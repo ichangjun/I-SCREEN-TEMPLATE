@@ -39,7 +39,7 @@ const props = defineProps({
   // 图表高度
   height: {
     type: [String, Number],
-    default: '300px'
+    default: '280px'
   }
 })
 // echarts 实例

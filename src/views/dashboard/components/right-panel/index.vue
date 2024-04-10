@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-09 16:21:56
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 16:36:37
+ * @LastEditTime: 2024-04-09 18:16:41
  * @FilePath: /I-SCREEN-TEMPLATE/src/views/dashboard/components/right-panel/index.vue
  * @Description: 栏目标题
 -->
@@ -18,7 +18,7 @@ import { computed, defineProps } from 'vue'
 const props = defineProps({
   height: {
     type: Number,
-    default: 380,
+    default: 360,
   },
   title: {
     type: String,
