@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 17:40:02
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-01 19:57:52
+ * @LastEditTime: 2024-04-10 10:36:22
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/App.vue
  * @Description: 主页
 -->
@@ -16,7 +16,7 @@
 */
 
 <template>
-  <div class="app-page-view">
+  <div class="app-page-view w-full h-full">
     <config-provider :theme="{
       token: {
         colorPrimary: '#165DFF',

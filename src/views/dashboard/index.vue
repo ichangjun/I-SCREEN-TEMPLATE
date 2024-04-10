@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 18:23:51
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 16:24:55
+ * @LastEditTime: 2024-04-10 10:47:31
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/views/dashboard/index.vue
  * @Description: 大屏首页
 -->
@@ -70,7 +70,7 @@ const extraOptions = {
 }
 
 .right-view_part {
-  background: linear-gradient(-90deg, rgba(11, 28, 58, .9) 78%, rgba(11, 28, 58, 0) 100%);
+  background: linear-gradient(270deg, rgba(11, 28, 58, .9) 78%, rgba(11, 28, 58, 0) 100%);
   width: 480px;
 }
 </style>
