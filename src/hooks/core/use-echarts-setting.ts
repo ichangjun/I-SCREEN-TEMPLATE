@@ -2,14 +2,13 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-10 16:43:26
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-10 20:21:13
+ * @LastEditTime: 2024-04-11 11:44:42
  * @FilePath: /I-SCREEN-TEMPLATE/src/hooks/common/use-echarts-setting.ts
  * @Description: echarts 图表渲染hooks
  */
 import { onMounted, onUnmounted, watch } from 'vue'
 import { merge } from 'lodash-es'
 import { BASEOPTIONS } from '../../components/i-echarts/default-options'
-import { BarSeriesOption } from 'echarts/charts'
 
 /**
  *  数据变化 & 窗口大小变化 监听
@@ -68,5 +67,5 @@ const resizeChart = (chartInstance) => {
  * @returns
  */
 const assembleChartOptions = (options, props) => {
-  return merge({}, BASEOPTIONS, ...options, props.extraOptions) as BarSeriesOption
+  return merge({}, BASEOPTIONS, ...options, props.extraOptions)
 }

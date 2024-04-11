@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 18:23:51
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-10 20:16:52
+ * @LastEditTime: 2024-04-11 11:39:51
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/views/dashboard/index.vue
  * @Description: 大屏首页
 -->
@@ -32,12 +32,14 @@
   </div>
 </template>
 <script setup lang='ts'>
-import { defineOptions, inject } from 'vue'
+import { defineOptions, ref, inject } from 'vue'
 import leftPanel from './components/left-panel/index.vue'
 import rightPanel from './components/right-panel/index.vue'
 defineOptions({
   name: 'Dashboard',
 })
+// 注入 echarts 实例
+const echarts = inject('$echarts')
 // 地图渲染完成
 const listenerMapLoad = (isLoad) => {
   if (isLoad) {
@@ -45,10 +47,8 @@ const listenerMapLoad = (isLoad) => {
 
   }
 }
-// 注入 echarts 实例
-const echarts = inject('$echarts')
-const xData = ['牛首山', '汤山', '九龙湖', '猿人洞', '紫清湖', '银杏湖', '方山', '大塘金']
-const yData = [22.3, 14.5, 7.2, 17.5, 28.1, 9.2, 21.7, 16.5]
+const xData = ref(['牛首山', '汤山', '九龙湖', '猿人洞', '紫清湖', '银杏湖', '方山', '大塘金'])
+const yData = ref([22.3, 14.5, 7.2, 17.5, 28.1, 9.2, 21.7, 16.5])
 const extraOptions = {
   series: [
     {
@@ -62,6 +62,12 @@ const extraOptions = {
     }
   ]
 }
+// 测试更新数据
+setInterval(() => {
+  xData.value = ['牛首山', '汤山', '九龙湖', '猿人洞', '紫清湖', '银杏湖', '方山', '大塘金', '新加坡']
+  // yData 生成随机数
+  yData.value = [Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10]
+}, 3000)
 </script>
 <style lang='less' scoped>
 .left-view_part {

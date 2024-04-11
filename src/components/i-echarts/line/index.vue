@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-10 14:16:25
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-10 20:25:51
+ * @LastEditTime: 2024-04-11 09:33:09
  * @FilePath: /I-SCREEN-TEMPLATE/src/components/i-echarts/line/index.vue
  * @Description: 折线图
 -->
@@ -24,13 +24,13 @@ const props = defineProps({
   // 业务数据，对应echarts的 xAxis 中的 data
   xData: {
     type: Array,
-    reqyired: true,
+    required: true,
     default: () => []
   },
   // 业务数据，对应echarts的 series 中的 data
   yData: {
     type: Array,
-    reqyired: true,
+    required: true,
     default: () => []
   },
   // 表示需要特殊定制的配置
