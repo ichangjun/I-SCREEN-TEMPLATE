@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-01-05 10:36:01
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-09 10:12:38
+ * @LastEditTime: 2024-04-11 17:32:49
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/README.md
  * @Description: 工程描述文档
 -->
@@ -243,6 +243,8 @@ export default defineConfig({
 })
 ```
 
+在数据可视化大屏的项目中，图表组件库的使用是最基本的操作，比如 echarts；然而我们真的会使用图表组件库么？怎么样的使用才能让大屏中的图表更加流畅、清晰、美观？写出像“诗一样的代码”。下面将通过以下几个方案来进行优化。
+
 #### 按需引入 echarts 图表库，减少打包体积
 
 创建 _plugins/echarts.ts_ 文件，内容如下：
@@ -457,3 +459,191 @@ const assembleChartOptions = computed(() => {
 - 业务配置项：props.extraOptions
 
 定制化深度和复杂度，取决于业务的复杂度和定制化需求。业务定制化程度越高的，越要在调用的时候进行定制化内容的传递，才能达到最佳效果。将可以剥离的通用配置，逐级抽离。比如抽离到相同图表类型的组件中、抽离到全局图表配置中。
+
+为了进一步优化代码结构，我将进一步把 echarts 图表库组件的配置抽离到 hooks 中，方便后续的维护和扩展。主要抽离的内容包括；
+
+- 数据的变化驱动图表更新的脚本；
+- 窗口大小变化驱动图表更新的脚本；
+- 图表合并&渲染配置的脚本；
+
+```ts
+import { onMounted, onUnmounted, watch } from 'vue'
+import { merge } from 'lodash-es'
+import { BASEOPTIONS } from '../../components/i-echarts/default-options'
+
+/**
+ *  数据变化 & 窗口大小变化 监听
+ * @param props 通信
+ * @param chartBarRef 图表容器
+ * @param chartBarInstance 图表实例
+ * @param chartOption 图表配置
+ */
+export const listenerChange = (props, chartRef, chartInstance, chartOption) => {
+  // 监听 props.yData 变化，更新图表
+  watch(
+    () => props.yData,
+    (newVal) => {
+      if (chartRef.value) {
+        // 从chartOption取出series数据，更新图表数据
+        const _seriesOption = chartOption.find((item) => Object.keys(item)[0] === 'series')
+        _seriesOption.series.forEach((item) => {
+          item.data = newVal
+        })
+        chartInstance.value.setOption({
+          series: _seriesOption.series
+        })
+      }
+    },
+    {
+      deep: true
+    }
+  )
+  onMounted(() => {
+    chartInstance.value.showLoading({
+      text: '正在努力加载...',
+      color: '#BCE7FA',
+      textColor: '#BCE7FA',
+      maskColor: 'rgba(11, 28, 58, 0.7)',
+      zlevel: 0
+    })
+    chartInstance.value.setOption(assembleChartOptions(chartOption, props))
+    chartInstance.value.hideLoading()
+    window.addEventListener('resize', () => {
+      resizeChart(chartInstance)
+    })
+  })
+  onUnmounted(() => {
+    window.removeEventListener('resize', () => {
+      resizeChart(chartInstance)
+    })
+  })
+}
+// 监听窗口大小变化，重新渲染图表
+const resizeChart = (chartInstance) => {
+  console.log(7777)
+  chartInstance.value.resize()
+}
+/**
+ * 组装图表配置
+ * @param options 不同类型图表配置
+ * @returns
+ */
+const assembleChartOptions = (options, props) => {
+  return merge({}, BASEOPTIONS, ...options, props.extraOptions)
+}
+```
+
+抽离之后，就可以优化【第三步】的代码结构了，只保留不同类型图表的配置项数据，内容如下：
+
+```ts
+<template>
+  <div ref="chartBarRef" class='chart-bar-view' :style="{ width: props.width, height: props.height }"></div>
+</template>
+<script setup lang='ts'>
+import { defineOptions, defineProps, onMounted, inject, ref, markRaw } from 'vue'
+import { listenerChange } from '@/hooks/core/use-echarts-setting'
+defineOptions({
+  name: 'ChartBar'
+})
+// 注入 echarts 实例
+const echarts = inject('$echarts')
+// echarts 实例
+const chartBarRef = ref(null)
+const chartBarInstance = ref(null)
+const props = defineProps({
+  // 业务数据，对应echarts的 xAxis 中的 data
+  xData: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  // 业务数据，对应echarts的 series 中的 data
+  yData: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  // 表示需要特殊定制的配置
+  // 同一工程中UI会规定一个统一的设计规范（比如颜色，字体，图例格式，位置等），不排除某个图标会和设计规范不同，需要特殊定制样式，所以开放这个配置，增强灵活性
+  extraOptions: {
+    type: Object,
+    default: () => { }
+  },
+  // 图表宽度
+  width: {
+    type: [String, Number],
+    default: '480px'
+  },
+  // 图表高度
+  height: {
+    type: [String, Number],
+    default: '280px'
+  }
+})
+
+const chartOption = [{
+  xAxis: {
+    data: props.xData
+  }
+},
+{
+  yAxis: {
+    type: 'value'
+  }
+},
+{
+  series: [{
+    type: 'bar',
+    data: props.yData,
+    itemStyle: {
+      color: new (echarts as any).graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: '#0CD2BB' },
+        { offset: 1, color: '#10749F' },
+      ]),
+    }
+  },
+  //顶部圆柱帽子
+  {
+    data: props.yData,
+    name: 'a',
+    tooltip: {
+      show: false
+    },
+    type: 'pictorialBar',
+    symbol: 'rect',
+    symbolSize: ['15', '4'],
+    symbolPosition: 'end',
+    z: 3,
+    itemStyle: {
+      normal: {
+        color: '#FFFFFF',
+        shadowBlur: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 2
+      }
+    },
+  }]
+}]
+onMounted(() => {
+  // 图表渲染
+  if (chartBarRef.value) {
+    chartBarInstance.value = markRaw((echarts as any).init(chartBarRef.value))
+  }
+})
+/**
+ *  数据变化 & 窗口大小变化 监听
+ * @param props 通信
+ * @param chartBarRef 图表容器
+ * @param chartBarInstance 图表实例
+ * @param chartOption 图表配置
+ */
+listenerChange(props, chartBarRef, chartBarInstance, chartOption)
+</script>
+
+```
+
+以上针对大屏中图表库的优化方案，可以作为数据可视化大屏项目的难点解决方案学习沉淀。总结下来也就是以下几个方面：
+
+- 按需引入 echarts 图表库，减少打包体积；
+- 封装统一的图表组件，业务数据和 echarts 的 options 配置分离；
+- 优化代码结构，抽离 echarts 图表库组件的配置为 hooks，方便后续的维护和扩展；

@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-01-05 10:36:01
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-11 16:40:17
+ * @LastEditTime: 2024-04-11 17:13:29
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/vite.config.ts
  * @Description: 工程配置文件
  */
@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => {
       open: true,
       proxy: {
         '/musicApi': {
-          target: 'http://localhost:3000',
+          target: envConfig.VITE_API_BASE_TARGET as string,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/musicApi/, '')
         }
