@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-02-01 18:23:51
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-11 11:39:51
+ * @LastEditTime: 2024-04-11 15:23:30
  * @FilePath: /VUE3-VITE-TS-TEMPLATE/src/views/dashboard/index.vue
  * @Description: 大屏首页
 -->
@@ -32,7 +32,7 @@
   </div>
 </template>
 <script setup lang='ts'>
-import { defineOptions, ref, inject } from 'vue'
+import { defineOptions, ref, inject, onMounted } from 'vue'
 import leftPanel from './components/left-panel/index.vue'
 import rightPanel from './components/right-panel/index.vue'
 defineOptions({
@@ -62,12 +62,16 @@ const extraOptions = {
     }
   ]
 }
-// 测试更新数据
-setInterval(() => {
-  xData.value = ['牛首山', '汤山', '九龙湖', '猿人洞', '紫清湖', '银杏湖', '方山', '大塘金', '新加坡']
-  // yData 生成随机数
-  yData.value = [Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10, Math.floor(Math.random() * 30) + 10]
-}, 3000)
+onMounted(() => {
+  if ('EventSource' in window) {
+    const eventSource = new EventSource('http://localhost:3000/api/data-stream')
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      xData.value = data.xData;
+      yData.value = data.yData;
+    };
+  }
+})
 </script>
 <style lang='less' scoped>
 .left-view_part {

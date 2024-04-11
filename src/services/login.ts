@@ -16,11 +16,14 @@ import Http from '@/utils/request-api'
  * @returns
  */
 export const login = (data: LoginParams) => {
-  return Http.request({
-    url: ApiPath.LoginByPhone,
-    method: 'post',
-    data,
-  }, {
-    ignoreLoading: true
-  })
+  return Http.request(
+    {
+      url: ApiPath.LoginByPhone,
+      method: 'post',
+      data
+    },
+    {
+      ignoreLoading: true
+    }
+  )
 }
