@@ -2,7 +2,7 @@
  * @Author: changjun anson1992@163.com
  * @Date: 2024-04-10 16:43:26
  * @LastEditors: changjun anson1992@163.com
- * @LastEditTime: 2024-04-11 11:44:42
+ * @LastEditTime: 2024-04-11 16:59:55
  * @FilePath: /I-SCREEN-TEMPLATE/src/hooks/common/use-echarts-setting.ts
  * @Description: echarts 图表渲染hooks
  */
@@ -23,12 +23,13 @@ export const listenerChange = (props, chartRef, chartInstance, chartOption) => {
     () => props.yData,
     (newVal) => {
       if (chartRef.value) {
+        // 从chartOption取出series数据，更新图表数据
+        const _seriesOption = chartOption.find((item) => Object.keys(item)[0] === 'series')
+        _seriesOption.series.forEach((item) => {
+          item.data = newVal
+        })
         chartInstance.value.setOption({
-          series: [
-            {
-              data: newVal
-            }
-          ]
+          series: _seriesOption.series
         })
       }
     },
